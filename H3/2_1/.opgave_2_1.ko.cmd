@@ -1,1 +1,1 @@
-cmd_/mnt/hgfs/DRVO/H3/opgave_2_1.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /mnt/hgfs/DRVO/H3/opgave_2_1.ko /mnt/hgfs/DRVO/H3/opgave_2_1.o /mnt/hgfs/DRVO/H3/opgave_2_1.mod.o ;  true
+cmd_/mnt/hgfs/DRVO/H3/2_1/opgave_2_1.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /mnt/hgfs/DRVO/H3/2_1/opgave_2_1.ko /mnt/hgfs/DRVO/H3/2_1/opgave_2_1.o /mnt/hgfs/DRVO/H3/2_1/opgave_2_1.mod.o ;  true

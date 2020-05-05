@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/lib/modules/source/include/linux/sched/**",
-                "/usr/src/linux-headers-4.15.0-54-generic/include/**"
+                "/usr/src/linux-headers-4.15.0-54-generic/include/**",
+                "/usr/include/x86_64-linux-gnu/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
