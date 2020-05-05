@@ -84,7 +84,7 @@ ssize_t hello_read(struct file *file, char __user *buf, size_t lbuf, loff_t *ppo
 ssize_t hello_write(struct file *file, const char __user *buf, size_t lbuf, loff_t *ppos)
 {
     printk(KERN_ALERT "hello_write()\n");
-    return 0;
+    return 23;
 }
 
 struct file_operations fops = {

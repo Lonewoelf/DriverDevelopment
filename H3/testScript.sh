@@ -1,5 +1,5 @@
 #!/bin/bash
 
-echo "w" > /dev/myReadWrite
+echo "writeTest" > /dev/myReadWrite
 
 cat /dev/myReadWrite
