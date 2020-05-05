@@ -1,10 +1,13 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/cdev.h>
+#include <linux/fs.h>
 
 MODULE_LICENSE("Dual BSD/GPL");
 
 #define DRIVER_NAME "myReadWrite"
+#define NUM_DEVICES 2
+#define MAYOR_NUM 238
 
 static const unsigned int minorBase = 0;
 static const unsigned int minorNum = 2;
@@ -29,8 +32,9 @@ static int opdrachtDrie_init(void)
         return -1;
     }
 
-    major = MAJOR(dev);
+    major = MAYOR_NUM;
     dev = MKDEV(major, minorBase);
+    register_chrdev_region(dev, NUM_DEVICES, DRIVER_NAME);
 
     printk(KERN_ALERT "Major %d Minor %d,%d", major, minorBase, minorNum);
 
@@ -44,7 +48,8 @@ static int opdrachtDrie_init(void)
         unregister_chrdev_region(dev, minorNum);
         return -1;
     }
-    return 0;
+
+     return 0;
 }
 static void opdrachtDrie_exit(void)
 {
