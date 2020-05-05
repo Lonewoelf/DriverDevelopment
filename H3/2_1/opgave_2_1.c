@@ -14,3 +14,6 @@ static void opdrachtTwee_exit(void)
 }
 module_init(opdrachtTwee_init);
 module_exit(opdrachtTwee_exit);
+
+//make opgave_2_1.ko obj-m=opgave_2_1.o -C /lib/modules/4.15.0-54-generic/build M=/mnt/hgfs/DRVO/H3/2_1
+//modules
