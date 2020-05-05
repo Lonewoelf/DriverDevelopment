@@ -32,6 +32,8 @@ static int opdrachtDrie_init(void)
     major = MAJOR(dev);
     dev = MKDEV(major, minorBase);
 
+    printk(KERN_ALERT "Major %d Minor %d,%d", major, minorBase, minorNum);
+
     cdev_init(&hallo_cdev, &fops);
     hallo_cdev.owner = THIS_MODULE;
 
@@ -42,12 +44,15 @@ static int opdrachtDrie_init(void)
         unregister_chrdev_region(dev, minorNum);
         return -1;
     }
-
     return 0;
 }
 static void opdrachtDrie_exit(void)
 {
     printk(KERN_ALERT "BYE 3 D:\n");
+    dev_t dev = MKDEV(major, minorBase);
+
+    cdev_del(&hallo_cdev);
+    unregister_chrdev_region(dev, minorNum);
 }
 
 module_init(opdrachtDrie_init);

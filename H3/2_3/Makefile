@@ -6,4 +6,4 @@ MAKE = /usr/bin/make
 	$(MAKE) obj-m=$(*).o -C $(KDIR) M=$(PWD) modules
 
 clean:
-	find . ! -name "Makefile" -name "opgave_2_3.c" -delete
+	rm -rfv *ko *cmd* .* *order *symvers *.o* *.mod*
