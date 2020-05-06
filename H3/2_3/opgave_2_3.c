@@ -14,6 +14,7 @@ static const unsigned int minorNum = 2;
 static unsigned int major;
 static struct cdev hallo_cdev;
 struct file_operations fops;
+static struct class *hello_class = NULL;
 
 int test = 1, test2 = 4;
 
@@ -23,8 +24,6 @@ module_param_named(testCase, test2, int, 0);
 static int opdrachtDrie_init(void)
 {
     printk(KERN_ALERT "HEY 3:D\n");
-
-
 
     int alloc_val = 0;
     int cdev_error = 0;
@@ -39,6 +38,7 @@ static int opdrachtDrie_init(void)
     }
 
     major = MAJOR(dev);
+
     dev = MKDEV(major, minorBase);
 
     printk(KERN_ALERT "Major %d Minor %d,%d", major, minorBase, minorNum);
@@ -54,13 +54,31 @@ static int opdrachtDrie_init(void)
         return -1;
     }
 
-     return 0;
+    hello_class = class_create(THIS_MODULE, "myReadWrite");
+    if (IS_ERR(hello_class))
+    {
+        printk(KERN_ERR "class_create\n");
+        cdev_del(&hallo_cdev);
+        unregister_chrdev_region(dev, minorNum);
+        return -1;
+    }
+
+    device_create(hello_class, NULL, MKDEV(major, minorBase), NULL, "hello%d", minorBase);
+
+    return 0;
 }
 static void opdrachtDrie_exit(void)
 {
     printk(KERN_ALERT "BYE 3 D:\n");
     dev_t dev = MKDEV(major, minorBase);
+    int minor = 0;
 
+    for (minor = minorBase; minor < minorBase + minorNum; minor++)
+    {
+        device_destroy(hello_class, MKDEV(major, minor));
+    }
+
+    class_destroy(hello_class);
     cdev_del(&hallo_cdev);
     unregister_chrdev_region(dev, minorNum);
 }

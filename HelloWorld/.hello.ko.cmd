@@ -1,1 +1,0 @@
-cmd_/mnt/hgfs/DRVO/HelloWorld/hello.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /mnt/hgfs/DRVO/HelloWorld/hello.ko /mnt/hgfs/DRVO/HelloWorld/hello.o /mnt/hgfs/DRVO/HelloWorld/hello.mod.o ;  true
