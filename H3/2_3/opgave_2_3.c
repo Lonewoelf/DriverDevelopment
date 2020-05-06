@@ -32,7 +32,7 @@ static int opdrachtDrie_init(void)
         return -1;
     }
 
-    major = MAYOR(dev);
+    major = MAJOR(dev);
     dev = MKDEV(major, minorBase);
 
     printk(KERN_ALERT "Major %d Minor %d,%d", major, minorBase, minorNum);
@@ -76,13 +76,13 @@ int hello_release(struct inode *inode, struct file *file)
 
 ssize_t hello_read(struct file *file, char __user *buf, size_t lbuf, loff_t *ppos)
 {
-    printk(KERN_ALERT "hello_read() read: %d\n",file->size;
+    printk(KERN_ALERT "hello_read() read: %d\n", (int)lbuf);
     return 0;
 }
 
 ssize_t hello_write(struct file *file, const char __user *buf, size_t lbuf, loff_t *ppos)
 {
-    printk(KERN_ALERT "hello_write() wrote: %d\n", file->size);
+    printk(KERN_ALERT "hello_write() wrote: %d\n", (int)lbuf);
     return 23;
 }
 
