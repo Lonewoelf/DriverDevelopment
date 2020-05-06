@@ -15,10 +15,16 @@ static unsigned int major;
 static struct cdev hallo_cdev;
 struct file_operations fops;
 
+int test = 1, test2 = 4;
+
+module_param(test, int, 0);
+module_param_named(testCase, test2, int, 0);
+
 static int opdrachtDrie_init(void)
 {
     printk(KERN_ALERT "HEY 3:D\n");
-    
+
+
 
     int alloc_val = 0;
     int cdev_error = 0;
