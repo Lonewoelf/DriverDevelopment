@@ -16,7 +16,7 @@ static struct cdev RW_driver;
 struct file_operations fops;
 static struct class *RW_class = NULL;
 
-int test = 1, test2 = 4;
+int count = 0;
 
 
 static int RW_init(void)
@@ -53,7 +53,7 @@ static int RW_init(void)
     }
 
     RW_class = class_create(THIS_MODULE, "myReadWrite");
-    if (IS_ERR(RW)clas))
+    if (IS_ERR(RW_class))
     {
         printk(KERN_ERR "class_create\n");
         cdev_del(&RW_driver);
@@ -67,13 +67,13 @@ static int RW_init(void)
 }
 static void RW_exit(void)
 {
-    printk(KERN_ALERT "Unintialising RW_driver\n");
+    printk(KERN_ALERT "Uninitialising RW_driver\n");
     dev_t dev = MKDEV(major, minorBase);
     int minor = 0;
 
     for (minor = minorBase; minor < minorBase + minorNum; minor++)
     {
-        device_destroy(RW)clas, MKDEV(major, minor));
+        device_destroy(RW_class, MKDEV(major, minor));
     }
 
     class_destroy(RW_class);
@@ -86,7 +86,8 @@ module_exit(RW_exit);
 
 int RW_open(struct inode *inode, struct file *file)
 {
-    printk(KERN_ALERT "RW_open()\n");
+    printk(KERN_ALERT "RW_open(). Open Count: %d\n",count);
+    count++;
     return 0;
 }
 

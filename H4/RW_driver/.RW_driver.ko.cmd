@@ -1,0 +1,1 @@
+cmd_/mnt/hgfs/DRVO/H4/RW_driver/RW_driver.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /mnt/hgfs/DRVO/H4/RW_driver/RW_driver.ko /mnt/hgfs/DRVO/H4/RW_driver/RW_driver.o /mnt/hgfs/DRVO/H4/RW_driver/RW_driver.mod.o ;  true
