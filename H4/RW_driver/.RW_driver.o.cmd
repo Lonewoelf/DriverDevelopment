@@ -845,6 +845,14 @@ deps_/mnt/hgfs/DRVO/H4/RW_driver/RW_driver.o := \
     $(wildcard include/config/x86/dev/dma/ops.h) \
     $(wildcard include/config/pci/domains.h) \
   include/linux/pm_wakeup.h \
+  include/linux/uaccess.h \
+  include/linux/kasan-checks.h \
+  arch/x86/include/asm/uaccess.h \
+    $(wildcard include/config/x86/intel/usercopy.h) \
+  arch/x86/include/asm/smap.h \
+    $(wildcard include/config/x86/smap.h) \
+  arch/x86/include/asm/extable.h \
+  arch/x86/include/asm/uaccess_64.h \
 
 /mnt/hgfs/DRVO/H4/RW_driver/RW_driver.o: $(deps_/mnt/hgfs/DRVO/H4/RW_driver/RW_driver.o)
 

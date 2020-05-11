@@ -2,12 +2,14 @@
 #include <linux/module.h>
 #include <linux/cdev.h>
 #include <linux/fs.h>
+#include <linux/uaccess.h>
 
 MODULE_LICENSE("Dual BSD/GPL");
 
 #define DRIVER_NAME "RW_driver"
 #define NUM_DEVICES 2
 #define MAYOR_NUM 238
+#define BUFFER_SIZE 256
 
 static const unsigned int minorBase = 0;
 static const unsigned int minorNum = 2;
@@ -17,6 +19,7 @@ struct file_operations fops;
 static struct class *RW_class = NULL;
 
 int count = 0;
+static char RW_buffer[BUFFER_SIZE];
 
 
 static int RW_init(void)
@@ -99,14 +102,39 @@ int RW_release(struct inode *inode, struct file *file)
 
 ssize_t RW_read(struct file *file, char __user *buf, size_t lbuf, loff_t *ppos)
 {
-    printk(KERN_ALERT "RW_read() read: %d\n", (int)lbuf);
-    return 0;
+    
+    int result;
+    int bytes_read = (int)lbuf;
+    // if (*ppos + lbuf > BUFFER_SIZE)
+    // {
+    //     printk(KERN_ALERT "TOO MUCH DATA FOR BUFFER : %d\n", (int)(*ppos + lbuf));
+    //     return -ENOMEM;
+    // }
+
+    result = copy_to_user(buf, RW_buffer + *ppos, lbuf);
+    *ppos += bytes_read;
+
+    printk(KERN_ALERT "RW_read() read: %d\n", bytes_read);
+
+    return bytes_read;
 }
 
 ssize_t RW_write(struct file *file, const char __user *buf, size_t lbuf, loff_t *ppos)
 {
-    printk(KERN_ALERT "RW_write() wrote: %d\n", (int)lbuf);
-    return 23;
+    int result;
+    unsigned long bytes_written = lbuf;
+    if (*ppos + lbuf > BUFFER_SIZE)
+    {
+        printk(KERN_ALERT "TOO MUCH DATA FOR BUFFER : %lu\n", (*ppos + lbuf));
+        return -ENOMEM;
+    }
+
+    result = copy_from_user(RW_buffer + *ppos, buf, lbuf);
+    *ppos += bytes_written;
+
+    printk(KERN_ALERT "RW_write() written: %lu\n", bytes_written);
+
+    return bytes_written;
 }
 
 struct file_operations fops = {
