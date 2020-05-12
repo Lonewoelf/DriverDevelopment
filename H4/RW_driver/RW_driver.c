@@ -20,7 +20,7 @@ static struct class *RW_class = NULL;
 
 int count = 0;
 static char RW_buffer[BUFFER_SIZE];
-
+static char *msg_Ptr;
 
 static int RW_init(void)
 {
@@ -29,6 +29,8 @@ static int RW_init(void)
     int alloc_val = 0;
     int cdev_error = 0;
     dev_t dev;
+
+    msg_Ptr = RW_buffer;
 
     alloc_val = alloc_chrdev_region(&dev, minorBase, minorNum, DRIVER_NAME);
 
@@ -101,20 +103,21 @@ int RW_release(struct inode *inode, struct file *file)
 }
 
 ssize_t RW_read(struct file *file, char __user *buf, size_t lbuf, loff_t *ppos)
-{
-    
-    int result;
-    int bytes_read = (int)lbuf;
-    // if (*ppos + lbuf > BUFFER_SIZE)
-    // {
-    //     printk(KERN_ALERT "TOO MUCH DATA FOR BUFFER : %d\n", (int)(*ppos + lbuf));
-    //     return -ENOMEM;
-    // }
+{  
+    int bytes_read = 0;
 
-    result = copy_to_user(buf, RW_buffer + *ppos, lbuf);
-    *ppos += bytes_read;
+    if (*msg_Ptr == 0){
+        return 0;
+    }
 
-    printk(KERN_ALERT "RW_read() read: %d\n", bytes_read);
+    while (lbuf && *msg_Ptr)
+    {
+        put_user(*(msg_Ptr++), buf++);
+
+        lbuf--;
+        bytes_read++;
+    }
+    printk(KERN_ALERT "RW_read() read: %lu\n", bytes_read);
 
     return bytes_read;
 }

@@ -12,6 +12,6 @@ install:
 	sudo insmod RW_driver.ko;
 	sudo mknod /dev/RW_driver c 241 0 -m 0666;
 
-unistall:
+uninstall:
 	sudo rmmod RW_driver;
 	sudo rm /dev/RW_driver;
