@@ -117,6 +117,7 @@ ssize_t RW_read(struct file *file, char __user *buf, size_t lbuf, loff_t *ppos)
         lbuf--;
         bytes_read++;
     }
+
     printk(KERN_ALERT "RW_read() read: %lu\n", bytes_read);
 
     return bytes_read;
@@ -140,9 +141,37 @@ ssize_t RW_write(struct file *file, const char __user *buf, size_t lbuf, loff_t 
     return bytes_written;
 }
 
-struct file_operations fops = {
-    .read = RW_read,
-    .write = RW_write,
-    .open = RW_open,
-    .release = RW_release,
+loff_t RW_llseek(struct file *filp, loff_t off, int whence){
+    printk(KERN_ALERT "Entering llseek");
+
+    loff_t newpos;
+    switch (whence)
+    {
+    case 0: /* SEEK_SET */
+        newpos = off;
+        break;
+    case 1: /* SEEK_CUR */
+        newpos = filp->f_pos + off;
+        break;
+    case 2: /* SEEK_END */
+        newpos = BUFFER_SIZE + off;
+        break;
+    default: /* can't happen */
+        return -EINVAL;
+    }
+    if (newpos < 0)
+        return -EINVAL;
+    filp->f_pos = newpos;
+
+
+    printk(KERN_ALERT "lseek newpos is: %d", (int)newpos);
+    return newpos;
+}
+
+    struct file_operations fops = {
+        .read = RW_read,
+        .write = RW_write,
+        .open = RW_open,
+        .release = RW_release,
+        .llseek = RW_llseek,
 };
