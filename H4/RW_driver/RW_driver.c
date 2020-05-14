@@ -3,13 +3,29 @@
 #include <linux/cdev.h>
 #include <linux/fs.h>
 #include <linux/uaccess.h>
+#include <linux/ioctl.h>
 
 MODULE_LICENSE("Dual BSD/GPL");
 
 #define DRIVER_NAME "RW_driver"
 #define NUM_DEVICES 2
-#define MAYOR_NUM 238
 #define BUFFER_SIZE 256
+
+#define RW_IOC_MAGIC 241  //Mayor num from the driver
+#define RW_IOCRESET _IO(RW_IOC_MAGIC, 0)
+#define RW_IOCSQUANTUM _IOW(RW_IOC_MAGIC, 1, int)
+#define RW_IOCSQSET _IOW(RW_IOC_MAGIC, 2, int)
+#define RW_IOCTQUANTUM _IO(RW_IOC_MAGIC, 3)
+#define RW_IOCTQSET _IO(RW_IOC_MAGIC, 4)
+#define RW_IOCGQUANTUM _IOR(RW_IOC_MAGIC, 5, int)
+#define RW_IOCGQSET _IOR(RW_IOC_MAGIC, 6, int)
+#define RW_IOCQQUANTUM _IO(RW_IOC_MAGIC, 7)
+#define RW_IOCQQSET _IO(RW_IOC_MAGIC, 8)
+#define RW_IOCXQUANTUM _IOWR(RW_IOC_MAGIC, 9, int)
+#define RW_IOCXQSET _IOWR(RW_IOC_MAGIC, 10, int)
+#define RW_IOCHQUANTUM _IO(RW_IOC_MAGIC, 11)
+#define RW_IOCHQSET _IO(RW_IOC_MAGIC, 12)
+#define RW_IOC_MAXNR 14
 
 static const unsigned int minorBase = 0;
 static const unsigned int minorNum = 2;
@@ -163,9 +179,13 @@ loff_t RW_llseek(struct file *filp, loff_t off, int whence){
         return -EINVAL;
     filp->f_pos = newpos;
 
-
     printk(KERN_ALERT "lseek newpos is: %d", (int)newpos);
     return newpos;
+}
+
+long RW_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned long args){
+    printk(KERN_ALERT "Entered: unlocked_ioctl()");
+    return 0;
 }
 
     struct file_operations fops = {
@@ -174,4 +194,5 @@ loff_t RW_llseek(struct file *filp, loff_t off, int whence){
         .open = RW_open,
         .release = RW_release,
         .llseek = RW_llseek,
+        .unlocked_ioctl = RW_unlocked_ioctl
 };
