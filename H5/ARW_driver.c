@@ -5,6 +5,9 @@
 #include <linux/interrupt.h>
 #include <linux/kernel.h>
 
+#include <linux/jiffies.h>
+#include <linux/timer.h>
+
 MODULE_LICENSE("Dual BSD/GPL");
 
 #define DRIVER_NAME "ARW_driver"
@@ -27,6 +30,27 @@ static irqreturn_t ARW_irq(int irq, void *dev_id)
     printk(KERN_ALERT "irq %d\n", irq);
 
     return IRQ_RETVAL(1);
+}
+
+void jit_timer_fn(unsigned long arg)
+{
+    arg = usecs_to_jiffies(arg);
+    int tdelay = 0;
+    struct jit_data *data = (struct jit_data *)arg;
+    unsigned long j = jiffies;
+    data->buf += sprintf(data->buf, "%9li %3li %i %6i %i %s\n",
+                         j, j - data->prevjiffies, in_interrupt() ? 1 : 0,
+                         current->pid, smp_processor_id(), current->comm);
+    if (--data->loops)
+    {
+        data->timer.expires += tdelay;
+        data->prevjiffies = j;
+        add_timer(&data->timer);
+    }
+    else
+    {
+        wake_up_interruptible(&data->wait);
+    }
 }
 
 static int ARW_init(void)
@@ -118,7 +142,8 @@ ssize_t ARW_read(struct file *file, char __user *buf, size_t lbuf, loff_t *ppos)
 ssize_t ARW_write(struct file *file, const char __user *buf, size_t lbuf, loff_t *ppos)
 {
     printk(KERN_ALERT "ARW_write() wrote: %d\n", (int)lbuf);
-    return 23;
+    jit_timer_fn(150);
+     return 23;
 }
 
 struct file_operations fops = {
